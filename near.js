@@ -30,6 +30,7 @@ export function Login() {
 }
 export function LogOut() {
     wallet.signOut();
+    location.reload();
 }
 export function IsConnected() {
     return wallet.isSignedIn();
