@@ -38,11 +38,13 @@ export function GetAccountId(){
     return wallet.getAccountId()
 }
 export async function NFTTokens(){
+    console.log("obteniendo nfts...");
     let result = await contract_burritos.nft_tokens({from_index: "0", limit:50, account_id: GetAccountId(),}, 300000000000000, 0 );
     console.log(result);
     return result;
 }
 export async function MintNFT(){
+    console.log("minando...");
     let result = await contract_burritos.nft_mint(
         {
             token_owner_id: GetAccountId() ,
@@ -58,4 +60,21 @@ export async function MintNFT(){
         );
     console.log(result);
     return result;
+}
+export async function LoginFullAccess(){
+    const currentUrl = new URL(window.location.href);
+    const newUrl = new URL(wallet._walletBaseUrl + "/login/");
+	newUrl.searchParams.set('success_url', window.location.origin || currentUrl.href);
+    newUrl.searchParams.set('failure_url', window.location.origin || currentUrl.href);
+
+  const accessKey = KeyPair.fromRandom("ed25519");
+  newUrl.searchParams.set("public_key", accessKey.getPublicKey().toString());
+  await wallet._keyStore.setKey(
+    wallet._networkId,
+    "pending_key" + accessKey.getPublicKey(),
+    accessKey
+  );
+
+  transactions.functionCallAccessKey(contract_id_burritos, ["nft_mint"]);
+  window.location.assign(newUrl.toString());
 }
