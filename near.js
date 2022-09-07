@@ -18,7 +18,7 @@ const contract_id_burritos = "dev-1662497209670-35450562637719";
 
 const contract_burritos = new Contract(wallet.account(), contract_id_burritos, {
     viewMethods: [  ],
-    changeMethods: [ "nft_tokens" ],
+    changeMethods: [ "nft_tokens", "nft_mint" ],
     sender: wallet.account()
 });
 export function Login() {
@@ -39,6 +39,23 @@ export function GetAccountId(){
 }
 export async function NFTTokens(){
     let result = await contract_burritos.nft_tokens({from_index: "0", limit:50, account_id: GetAccountId(),}, 300000000000000, 0 );
+    console.log(result);
+    return result;
+}
+export async function MintNFT(){
+    let result = await contract_burritos.nft_mint(
+        {
+            token_owner_id: GetAccountId() ,
+            token_metadata: { 
+                title: "Burrito 3", 
+                description: "This is a burrito", 
+                media: "https://s3-us-west-2.amazonaws.com/melingoimages/Images/28098.jpg", 
+                extra: ""
+            }
+        },
+        300000000000000, 
+        utils.format.parseNearAmount("5")
+        );
     console.log(result);
     return result;
 }
